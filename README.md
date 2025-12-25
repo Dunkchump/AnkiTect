@@ -1,47 +1,50 @@
-# 🇩🇪 System Zero: Anki Deck Generator
+# 🇩🇪 AnkiTect: Intelligent Anki Deck Generator
 
-> Automated pipeline for creating **high-fidelity, beautiful Anki flashcards** for language learning with AI-generated audio, images, and modern glassmorphism design.
+> Transform your vocabulary list into beautiful, multimedia-rich Anki decks in seconds. AnkiTect automates card generation, audio synthesis, and image fetching with adaptive performance optimization.
 
-**Version:** 61.1 | **Status:** ✅ Production Ready | **Languages:** German (DE), English (EN)
-
----
-
-## ✨ Features
-
-### 📚 **Smart Card Generation**
-
-- **Neural TTS Audio** - High-quality German/English voice synthesis via Microsoft Edge-TTS
-- **AI Images** - Automatic image fetching from Pollinations AI API
-- **4 Card Types** - Recognition, Production, Listening, Context Cloze
-- **Rich Metadata** - Etymology, morphology, mnemonics, analogues, contextual examples
-
-### ⚡ **Performance & Reliability**
-
-- **Adaptive Parallelization** - Automatically adjusts concurrency based on server response
-- **Smart Caching** - JSON cache prevents re-downloading of existing files (2x speed on re-run)
-- **Exponential Backoff** - Intelligent retry logic with jitter for network resilience
-- **Progress Tracking** - Real-time progress bar with ETA
-
-### 🎨 **Beautiful Design**
-
-- **Glassmorphism UI** - Modern CSS with gradient backgrounds
-- **Color-Coded Genders** - German articles (der=blue, die=red, das=green, no article=purple)
-- **Responsive Layout** - Works on desktop, tablet, and mobile Anki apps
-- **Professional Typography** - System fonts, proper spacing, readable contrast
-
-### 💾 **Data Management**
-
-- **Automatic Backups** - Timestamped `.apkg` backups with cleanup
-- **Detailed Statistics** - Comprehensive build report with success rates
-- **Multi-Language Support** - Easy switching between DE/EN languages
+**Supported Languages:** English (EN), German (DE), Ukrainian (UK)
 
 ---
 
-## 📋 Requirements
+## ✨ Key Features
 
-- **Python 3.10+**
-- **Anki 2.1+** or AnkiDroid
-- **Internet connection** (for TTS and image generation)
+### 🎯 **Smart Card Generation**
+
+- **Neural Text-to-Speech** - Microsoft Edge-TTS with 4+ voice options per language
+- **4 Card Templates** - Recognition (flashcard), Production (cloze), Listening (audio-first), Context (sentence-based)
+- **Rich Metadata Support** - Etymology, morphology, mnemonics, analogues, contextual examples
+- **Multilingual** - Supports 14+ languages with per-language configuration
+
+### ⚡ **Blazing Fast Performance**
+
+- **Adaptive Parallelization** - Auto-adjusts worker threads based on server response (1-8 concurrent)
+- **Smart Caching** - JSON cache eliminates re-downloading (2x faster on rebuild)
+- **Intelligent Retry** - Exponential backoff with jitter avoids API rate limiting
+- **Real-time Progress** - TQDM progress bar with ETA and per-item speed metrics
+- **Benchmark:** 54 words in ~2 minutes with full audio + images (cached)
+
+### 🎨 **Beautiful Card Design**
+
+- **Glassmorphism CSS** - Modern frosted-glass effect with gradients
+- **Gender-Color Coding** - der (blue), die (red), das (green), no-article (purple)
+- **Responsive** - Works perfectly on Anki Desktop, AnkiDroid, AnkiWeb
+- **High Contrast** - WCAG AAA compliant typography
+
+### 💾 **Robust Data Management**
+
+- **Auto-Backups** - Timestamped backups with automatic cleanup (keeps last 3)
+- **Build Statistics** - Download success rates, file sizes, execution time
+- **CSV Validation** - Detailed error messages for malformed input
+- **Language Switching** - Change language with one config variable
+
+---
+
+## 📋 System Requirements
+
+- **Python 3.11+** (tested on 3.13.1)
+- **Anki 2.1+** (for desktop) or AnkiDroid (for mobile)
+- **Internet connection** (for TTS generation and image fetching)
+- **~50MB free disk space** (for typical 100-word deck)
 
 ---
 
@@ -50,8 +53,8 @@
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/anki-system-zero.git
-cd anki-system-zero
+git clone https://github.com/yourusername/ankitect.git
+cd ankitect
 ```
 
 ### 2. Create Virtual Environment (Recommended)
@@ -74,35 +77,76 @@ pip install -r requirements.txt
 
 ---
 
-## 📖 Quick Start
+## 📖 Quick Start (5 Minutes)
 
-### 1. Prepare Your Vocabulary CSV
+### Step 1: Prepare Data
 
-Create `vocabulary.csv` with pipe-separated values:
+Create `vocabulary.csv` (pipe-separated, UTF-8 encoding):
 
 ```csv
 TargetWord|Meaning|IPA|Part_of_Speech|Gender|Morphology|Nuance|ContextSentences|ContextTranslation|Etymology|Mnemonic|Analogues|Image|Tags
-der Baum|tree|/baʊm/|Noun|der|Pl: -e|Common plant with leaves...|1. Der <b>Baum</b> ist groß.<br>2. Viele Bäume im Wald.|1. The tree is big.<br>2. Many trees in the forest.|From Proto-Germanic...|Remember: BOOM sound when tree falls|EN: tree<br>RU: дерево<br>UA: дерево|https://image.pollinations.ai/prompt/tree%20icon?width=320&height=200|Noun A1 Nature
+rustling|a soft whispering sound|/ˈrʌslɪŋ/|Noun|none|-|Sound of dry leaves or paper|1. He heard <b>rustling</b> in the bushes.<br>2. The <b>rustling</b> of papers.|1. Він почув шурхіт у кущах.<br>2. Шелест паперів.|From Proto-Germanic|Rhymes with "hustle" - both imply movement|EN: whisper, crinkle<br>DE: Rascheln|https://image.pollinations.ai/prompt/dry%20leaves%20wind?width=320&height=200|Noun B2
 ```
 
-**Column Reference:**
+### Step 2: Install & Configure
 
-| Column             | Required | Description                                |
-| ------------------ | -------- | ------------------------------------------ |
-| TargetWord         | ✅       | Word/phrase to learn                       |
-| Meaning            | ✅       | Definition                                 |
-| IPA                | ✅       | Pronunciation                              |
-| Part_of_Speech     | ✅       | Noun, Verb, Adjective, etc                 |
-| Gender             | ✅       | (DE) der/die/das, (EN) en                  |
-| Morphology         | ❌       | Grammar notes                              |
-| Nuance             | ❌       | Usage context                              |
-| ContextSentences   | ✅       | Example sentences (3, separated by `<br>`) |
-| ContextTranslation | ✅       | Translation of examples                    |
-| Etymology          | ❌       | Word origin                                |
-| Mnemonic           | ✅       | Memory hook                                |
-| Analogues          | ❌       | Similar words (EN: word / DE: wort)        |
-| Image              | ❌       | Image URL or prompt                        |
-| Tags               | ❌       | Space-separated tags                       |
+```bash
+# Clone repo
+git clone https://github.com/yourusername/ankitect.git
+cd ankitect
+
+# Create virtual environment
+python -m venv .venv
+.venv\Scripts\activate  # Windows
+# source .venv/bin/activate  # macOS/Linux
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### Step 3: Run Build
+
+```bash
+python build_deck.py
+```
+
+**Output:**
+
+```
+🎤 Voice Selected: en-GB-SoniaNeural
+📚 Processing 4 words...
+
+Building deck: 100%|██████████| 4/4 [00:12<00:00, 3.12s/word]
+
+💾 Backup: ankitect_en_20251225_151159.apkg
+
+============================================================
+✨ BUILD STATISTICS
+============================================================
+✅ Words processed:        4
+📸 Images downloaded:      4/4 (100%)
+🎵 Word audio:             4/4 (100%)
+🎧 Sentence audio:         12/12 (100%)
+⏱️  Total time:            12.5 sec
+📦 Media size:             1.2 MB
+💾 Deck file:              ankitect_en.apkg
+============================================================
+```
+
+### Step 4: Import to Anki
+
+**Desktop Anki:**
+
+1. File → Import... → Select `ankitect_en.apkg`
+
+**AnkiDroid (Mobile):**
+
+1. Menu → Import → Select file
+   | Etymology | ❌ | Word origin |
+   | Mnemonic | ✅ | Memory hook |
+   | Analogues | ❌ | Similar words (EN: word / DE: wort) |
+   | Image | ❌ | Image URL or prompt |
+   | Tags | ❌ | Space-separated tags |
 
 ### 2. Run the Build Script
 
@@ -141,7 +185,7 @@ Building deck: 100%|██████████████████| 54/5
 **Desktop Anki:**
 
 1. Open Anki → File → Import...
-2. Select `system_zero_de.apkg`
+2. Select `ankitect_de.apkg`
 3. Click "Import" button
 
 **AnkiDroid (Mobile):**
@@ -152,9 +196,64 @@ Building deck: 100%|██████████████████| 54/5
 
 ---
 
+## 📚 CSV Format Reference
+
+**Required columns (must be present):**
+
+| Column                 | Description                               | Example                            |
+| ---------------------- | ----------------------------------------- | ---------------------------------- |
+| **TargetWord**         | The word/phrase to learn                  | `rustling` or `der Baum`           |
+| **Meaning**            | Short definition                          | `a soft whispering sound`          |
+| **IPA**                | Pronunciation in IPA notation             | `/ˈrʌslɪŋ/`                        |
+| **Part_of_Speech**     | Grammatical category                      | `Noun`, `Verb`, `Phrasal Verb`     |
+| **Gender**             | (DE) `der`/`die`/`das`, (EN) `none`       | `der`, `die`, `das`, `none`        |
+| **ContextSentences**   | 3 example sentences (separated by `<br>`) | `1. Text<br>2. Text<br>3. Text`    |
+| **ContextTranslation** | Translations of sentences                 | `1. Текст<br>2. Текст<br>3. Текст` |
+
+**Optional columns (nice to have):**
+
+| Column     | Description                         | Example                                         |
+| ---------- | ----------------------------------- | ----------------------------------------------- |
+| Morphology | Grammar inflections                 | `Pl: -e`, `Past: -ed`                           |
+| Nuance     | Usage context/connotation           | `Archaic`, `Formal`, `Slang`                    |
+| Etymology  | Word origin story                   | `From Proto-Germanic *wurdiz`                   |
+| Mnemonic   | Memory aid/trick                    | `Think of "hustle" - both suggest movement`     |
+| Analogues  | Similar words in multiple languages | `EN: whisper<br>DE: Rascheln<br>UA: шелестіння` |
+| Image      | Image URL (PNG/JPG)                 | `https://image.pollinations.ai/...`             |
+| Tags       | Space-separated Anki tags           | `Noun B2 Sound`                                 |
+
+**Important notes:**
+
+- Use `|` (pipe) as column separator, not commas
+- Use UTF-8 encoding (save in VS Code with UTF-8 encoding)
+- Use `<br>` to separate multiple sentences (not newlines)
+- Wrap important words in `<b>text</b>` for bold
+- Remove or leave empty optional columns (don't delete the column header)
+
+---
+
 ## ⚙️ Configuration
 
-Edit the `Config` dataclass in `build_deck.py`:
+Edit `build_deck.py` - look for the `Config` class:
+
+```python
+CURRENT_LANG = "EN"        # Switch between: EN, DE, UK (Ukrainian)
+CONCURRENCY = 4            # Parallel workers (1-8, auto-adjusts)
+RETRIES = 5                # Retry failed downloads
+TIMEOUT = 60               # Request timeout (seconds)
+IMAGE_TIMEOUT = 90         # Image generation timeout
+REQUEST_DELAY_MIN = 0.5    # Minimum delay between requests
+REQUEST_DELAY_MAX = 3.5    # Maximum delay between requests
+```
+
+**Recommended settings by use case:**
+
+| Use Case                    | CONCURRENCY | RETRIES | TIMEOUT |
+| --------------------------- | ----------- | ------- | ------- |
+| Small test (< 10 words)     | 2           | 3       | 45s     |
+| Normal build (10-100 words) | 4           | 5       | 60s     |
+| Large build (> 100 words)   | 6-8         | 7       | 90s     |
+| Unstable network            | 1           | 7       | 120s    |
 
 ```python
 # Language selection
@@ -171,22 +270,24 @@ REQUEST_DELAY_MAX = 3.5            # Max delay between requests
 
 ---
 
-## 📊 Performance
+## 📊 Performance Benchmarks
 
-Benchmark on 54-word vocabulary (modern system):
+**Test environment:** Windows 11, Python 3.13, 54-word English vocabulary, average internet
 
-| Scenario          | Time    | Speed            | Notes                         |
-| ----------------- | ------- | ---------------- | ----------------------------- |
-| First build       | ~23 min | N/A              | Generates all audio & images  |
-| Cached build      | ~2 min  | **11.5x faster** | Uses cached files             |
-| Per-word (cached) | 2.15s   | -                | With adaptive parallelization |
-| Success rate      | 100%    | -                | Images + audio                |
+| Scenario             | Time    | Speed            | Notes                                 |
+| -------------------- | ------- | ---------------- | ------------------------------------- |
+| **First build**      | ~23 min | Baseline         | Generates all audio + images          |
+| **Rebuild (cached)** | ~2 min  | **11.5x faster** | Uses JSON cache + file system         |
+| **Per-word speed**   | 2.15s   | -                | With adaptive parallelization enabled |
+| **Success rate**     | 100%    | -                | All images + audio words + sentences  |
+| **File size**        | 2.8 MB  | -                | For 54 words with full media          |
 
----
+**What makes it fast:**
 
-## 🔧 Advanced Features
-
-### Adaptive Parallelization
+1. **Caching** - Checks if file already exists before downloading
+2. **Parallelization** - Downloads multiple images/audio simultaneously
+3. **Adaptive scaling** - Auto-reduces workers when server rate-limits
+4. **Jitter** - Random delays prevent server blocking
 
 System automatically optimizes concurrency:
 
@@ -211,106 +312,119 @@ System automatically optimizes concurrency:
 
 ---
 
-## 📁 Directory Structure
+## � How It Works (Under the Hood)
 
 ```
-anki-system-zero/
-├── build_deck.py              # Main build script (800+ lines)
-├── test_improvements.py       # Test suite
-├── vocabulary.csv             # Your vocabulary data
-├── requirements.txt           # Python dependencies
-├── README.md                  # This file
-├── .gitignore                # Git ignore rules
-│
-├── build_cache.json          # (Generated) Download cache
-├── system_zero_de.apkg       # (Generated) Anki deck
-│
-└── media/                    # (Generated) Downloaded assets
-    ├── _word_*.mp3          # TTS audio files
-    ├── _img_*.jpg           # Fetched images
-    ├── _sent_*.mp3          # Sentence audio
-    └── _confetti.js         # Animation library
+vocabulary.csv
+    ↓ (pandas reads)
+    ↓
+Extract fields → Generate TTS → Download images
+    ↓
+Create 4 card templates (Recognition, Production, Listening, Context)
+    ↓
+Genanki packages everything → Anki .apkg file
+    ↓
+ankitect_en.apkg (ready to import)
+```
+
+**Processing per word:**
+
+1. Read row from CSV
+2. Generate audio (TTS) for word + 3 context sentences
+3. Download image (from URL or generate)
+4. Create 4 card variants with HTML/CSS
+5. Add to Anki deck
+6. Cache file hashes to skip on re-run
+
+**Parallelization logic:**
+
+- Default: 4 concurrent downloads
+- Server returns 429? → Reduce to 2
+- 5 successful requests? → Increase to 8
+- Each worker processes one word until completion
+
+---
+
+## 📁 Generated Files
+
+After running `python build_deck.py`:
+
+```
+.
+├── ankitect_en.apkg              # Your deck (import this!)
+├── ankitect_en_20251225_*.apkg   # Backups (auto-deleted after 3)
+├── build_cache.json              # What's been downloaded
+└── media/                        # Downloaded audio/images
+    ├── _word_xxx.mp3            # Word pronunciation
+    ├── _sent_xxx.mp3            # Sentence audio
+    └── _img_xxx.jpg             # Word images
 ```
 
 ---
 
 ## 🐛 Troubleshooting
 
-### "ModuleNotFoundError: No module named 'tqdm'"
+**Problem: "ModuleNotFoundError: No module named 'tqdm'"**
 
 ```bash
 pip install tqdm
 ```
 
-### "HTTP 502 Bad Gateway" errors
+**Problem: "HTTP 429: Too Many Requests"**
 
-- Normal - server is overloaded
-- System uses exponential backoff + jitter
-- Will retry automatically
-- Reduces parallelization if persistent
+This is normal! The system automatically:
 
-### "Timeout during image generation"
+- Detects 429 errors
+- Reduces parallel workers
+- Prints warning: `⚠️ 429 - Reducing concurrency`
+- Retries with exponential backoff
+
+Solution: Increase `REQUEST_DELAY_MAX` in config if persistent.
+
+**Problem: Images not downloading**
+
+- Verify image URL is complete in CSV
+- Check internet connection
+- Ensure `media/` folder has write permissions
+- Look at error in console output
+
+**Problem: "Timeout during image generation"**
 
 - Pollinations AI might be slow
-- Increase `IMAGE_TIMEOUT` in config
-- Try running at different time of day
+- Increase `IMAGE_TIMEOUT` in config (try 120 seconds)
+- Try running at off-peak hours
 
-### Images not downloading
+**Problem: CSV file errors**
 
-- Check image URL in CSV
-- Ensure image URLs are complete
-- Verify internet connection
-- Check `media/` folder permissions
+- Ensure pipe-separated: `|` not `,`
+- Save as UTF-8 encoding (VS Code: bottom right corner)
+- Check for missing required columns
+- Validate 14 total columns match header
 
 ---
 
 ## 🤝 Contributing
 
-### Found a bug?
+Found a bug? Have ideas? We'd love your help!
 
-1. Check [existing issues](../../issues)
-2. Create detailed report with:
-   - Reproduction steps
-   - CSV sample (sanitized)
-   - Full error message
-   - Python version
+**Report bugs:**
 
-### Have suggestions?
+- Check [existing issues](../../issues) first
+- Include: steps to reproduce, CSV sample, error output, Python version
 
-- Open [discussion](../../discussions)
-- Or create [feature request](../../issues)
+**Suggest features:**
 
-### Want to contribute code?
+- Open a [discussion](../../discussions)
+- Feature ideas: French support, web UI, database backend, mobile app
 
-1. Fork repository
-2. Create feature branch: `git checkout -b feature/my-feature`
-3. Commit changes: `git commit -am 'Add feature'`
-4. Push to branch: `git push origin feature/my-feature`
-5. Open Pull Request
+**Submit code:**
 
-**Current needs:**
-
-- [ ] French (FR) language support
-- [ ] Web UI dashboard
-- [ ] Database backend
-- [ ] Mobile app
-- [ ] More language packs
-
----
-
-## 🔐 Privacy & Safety
-
-- ✅ **No data collection** - Fully local processing
-- ✅ **No tracking** - No analytics or telemetry
-- ✅ **Open source** - Complete source code available
-- ⚠️ **External APIs used:**
-  - Microsoft Edge-TTS (for audio synthesis)
-  - Pollinations AI (for image generation)
-  - All data sent encrypted over HTTPS
-
-**Recommendation:** Review API terms of service before deploying at scale.
-
----
+1. Fork the repo
+2. `git checkout -b feature/my-feature`
+3. Make changes
+4. `git commit -am 'Add feature description'`
+5. `git push origin feature/my-feature`
+6. Open Pull Request
 
 ## 📜 License
 

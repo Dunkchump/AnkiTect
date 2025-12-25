@@ -1,7 +1,6 @@
 """
-System Zero: Automated Anki Deck Generator
+AnkiTect: Intelligent Anki Deck Generator
 ------------------------------------------
-Version: 61.0 (Fix: Split Analogues by <br> tags - Guaranteed Table Layout)
 """
 
 import asyncio
@@ -40,7 +39,7 @@ LANG_CONFIG = {
         "model_id": 1607393148 
     },
     "EN": {
-        "deck_name": "🇬🇧 English: System Zero max",
+        "deck_name": "🇬🇧 English: AnkiTect max",
         "voice": "en-GB-SoniaNeural",
         "voice_id": "SONIA",
         "label": "ENGLISH",
@@ -539,7 +538,7 @@ class AnkiDeckBuilder:
 
         return genanki.Model(
             Config.MODEL_ID,
-            f'System Zero {CURRENT_LANG} v61.0',
+            f'AnkiTect {CURRENT_LANG}',
             fields=fields,
             templates=[
                 {'name': '1. Recognition', 'qfmt': front_rec_safe, 'afmt': back_rec_safe},
@@ -720,7 +719,7 @@ class AnkiDeckBuilder:
 
     def export_package(self):
         """Експортувати колоду з резервною копією та статистикою"""
-        filename = f"system_zero_{CURRENT_LANG.lower()}.apkg"
+        filename = f"ankitect_{CURRENT_LANG.lower()}.apkg"
         valid_media = list(set([f for f in self.media_files if os.path.exists(f)]))
         
         # Обчислити розмір файлів
@@ -730,7 +729,7 @@ class AnkiDeckBuilder:
         # Резервна копія старого файлу
         if os.path.exists(filename):
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            backup_filename = f"system_zero_{CURRENT_LANG.lower()}_{timestamp}.apkg"
+            backup_filename = f"ankitect_{CURRENT_LANG.lower()}_{timestamp}.apkg"
             shutil.copy2(filename, backup_filename)
             print(f"💾 Резервна копія: {backup_filename}")
         
@@ -783,7 +782,7 @@ class AnkiDeckBuilder:
 
     def _cleanup_old_backups(self, keep_count: int = 3):
         """Видалити старі резервні копії, залишити тільки останні N"""
-        pattern = f"system_zero_{CURRENT_LANG.lower()}_*.apkg"
+        pattern = f"ankitect_{CURRENT_LANG.lower()}_*.apkg"
         backups = sorted(Path('.').glob(pattern), key=os.path.getmtime, reverse=True)
         
         for old_backup in backups[keep_count:]:
